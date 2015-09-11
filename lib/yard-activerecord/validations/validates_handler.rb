@@ -68,8 +68,11 @@ module YARD::Handlers::Ruby::ActiveRecord::Validate
               conditions[ kw ] = n.children.last.source
             else # otherwise it's type specific
               opts = n.jump(:hash)
-              value = ( opts != n ) ? opts.source : nil
-              validations[ kw ] = value
+              validations[ kw ] = if opts.type == :assoc
+                opts.jump(:var_ref).source
+              else
+                opts.source
+              end
             end
           end
         elsif param.type == :symbol_literal
